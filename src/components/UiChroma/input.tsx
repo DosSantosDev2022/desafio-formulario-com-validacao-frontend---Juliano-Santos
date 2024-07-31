@@ -8,7 +8,7 @@ const InputRoot = React.forwardRef<
   <div
     ref={ref}
     className={twMerge(
-      'flex h-14 w-full items-center gap-3 rounded  bg-zinc-800 p-4 focus-within:ring-2 focus-within:ring-zinc-900',
+      'flex h-14 w-full items-center gap-3 rounded  bg-zinc-100 p-4 focus-within:ring-2 focus-within:ring-zinc-300',
       className,
     )}
     {...props}
@@ -34,7 +34,7 @@ const Input = React.forwardRef<
     <input
       type={type}
       className={twMerge(
-        'text-md flex-1 bg-transparent font-light text-zinc-300 outline-none placeholder:text-zinc-400',
+        'text-lg flex-1 bg-transparent font-normal text-zinc-500 outline-none placeholder:text-zinc-400',
         className,
       )}
       ref={ref}
