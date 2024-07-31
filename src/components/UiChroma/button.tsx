@@ -71,7 +71,7 @@ export function Button({
       disabled={isLoading || variant === 'disabled'}
     >
       {isLoading ? (
-        <span className="flex items-center w-full gap-1">
+        <span className="flex items-center justify-center w-full gap-1">
           {props.children}
           <LoaderCircle size={20} className="animate-spin text-zinc-50" />
         </span>

@@ -1,6 +1,7 @@
 'use client'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
+import { UseFormSetValue } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 interface SelectContext {
@@ -8,6 +9,7 @@ interface SelectContext {
   toggleOpen: () => void
   selectedOption: string
   selectOption: (option: string) => void
+  setValue?: UseFormSetValue<any> | null
 }
 
 const SelectContext = createContext<SelectContext | undefined>(undefined)
@@ -21,7 +23,13 @@ const useSelectContext = () => {
   return context
 }
 
-const SelectProvider = ({ children }: { children: ReactNode }) => {
+const SelectProvider = ({
+  children,
+  setValue,
+}: {
+  children: ReactNode
+  setValue: UseFormSetValue<any> | null
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState('Selecione')
   const toggleOpen = () => setIsOpen((prev) => !prev)
@@ -33,7 +41,7 @@ const SelectProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <SelectContext.Provider
-      value={{ isOpen, toggleOpen, selectedOption, selectOption }}
+      value={{ isOpen, toggleOpen, selectedOption, selectOption, setValue }}
     >
       {children}
     </SelectContext.Provider>
@@ -127,10 +135,15 @@ const SelectOption = React.forwardRef<
   HTMLOptionElement,
   React.HTMLAttributes<HTMLOptionElement>
 >(({ className, children, ...props }, ref) => {
-  const { selectOption } = useSelectContext()
+  const { selectOption, setValue } = useSelectContext()
   return (
     <option
-      onClick={() => selectOption(children as string)}
+      onClick={() => {
+        selectOption(children as string)
+        if (setValue) {
+          setValue('cargo', children as string)
+        }
+      }}
       className={twMerge(
         'relative flex w-full cursor-pointer border items-center bg-secondary-50 py-2 hover:bg-zinc-200  pl-8  pr-2 text-sm text-zinc-950 outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         className,
