@@ -9,10 +9,13 @@ import {
   SelectProvider,
   SelectTrigger,
 } from './UiChroma/select'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { formSchema, FormValues } from '../@types/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import { FaPhoneAlt, FaUser } from 'react-icons/fa'
+import { MdAttachEmail } from 'react-icons/md'
 
 interface FormProps {
   currentStep: number
@@ -20,13 +23,15 @@ interface FormProps {
 }
 
 export function Form({ currentStep, setCurrentStep }: FormProps) {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
-  const [isSuccess, setIsSucess] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
   const {
     register,
     handleSubmit,
     watch,
     setValue,
+
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -37,73 +42,64 @@ export function Form({ currentStep, setCurrentStep }: FormProps) {
       cargo: '',
     },
   })
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+
+  const nome = watch('nome')
+  const telefone = watch('telefone')
+  const email = watch('email')
+  const cargo = watch('cargo')
+
+  const handleNextStep = async () => {
+    if (currentStep < 2) {
+      setCurrentStep((prevStep) => prevStep + 1)
+    } else {
+      handleSubmit(onSubmit)() // Submete o formulário na última aba
+    }
+  }
+
+  const onSubmit = (data: FormValues) => {
     setIsLoading(true)
     setTimeout(() => {
-      if (currentStep < 2) {
-        setCurrentStep(currentStep + 1)
-      } else {
-        localStorage.setItem('formData', JSON.stringify(data))
-        toast.success('Cadastro realizado com sucesso.')
-        setIsSucess(true)
-        setIsLoading(false)
-      }
+      localStorage.setItem('formData', JSON.stringify(data))
+      toast.success('Cadastro realizado com sucesso.')
+      setIsSuccess(true)
+      navigate('/success')
+      setIsLoading(false)
     }, 5000)
   }
 
   const buttonLabels = ['Continuar', 'Continuar', 'Finalizar']
   const selectedCargo = watch('cargo')
   const options = [
-    {
-      label: 'Desenvolvedor Frontend',
-    },
-    {
-      label: 'Desenvolvedor Backend',
-    },
-    {
-      label: 'Desenvolvedor Full Stack',
-    },
-    {
-      label: 'Desenvolvedor Mobile',
-    },
-    {
-      label: 'Desenvolvedor de Software',
-    },
-    {
-      label: 'Engenheiro de Software',
-    },
-    {
-      label: 'Arquiteto de Software',
-    },
-    {
-      label: 'UI/UX Designer',
-    },
-    {
-      label: 'Analista de Sistemas',
-    },
-    {
-      label: 'Analista Programador',
-    },
-    {
-      label: 'Engenheiro de Dados',
-    },
-    {
-      label: 'QA Engineer',
-    },
-    {
-      label: 'DevOps',
-    },
+    { label: 'Desenvolvedor Frontend' },
+    { label: 'Desenvolvedor Backend' },
+    { label: 'Desenvolvedor Full Stack' },
+    { label: 'Desenvolvedor Mobile' },
+    { label: 'Desenvolvedor de Software' },
+    { label: 'Engenheiro de Software' },
+    { label: 'Arquiteto de Software' },
+    { label: 'UI/UX Designer' },
+    { label: 'Analista de Sistemas' },
+    { label: 'Analista Programador' },
+    { label: 'Engenheiro de Dados' },
+    { label: 'QA Engineer' },
+    { label: 'DevOps' },
   ]
 
+  const isButtonDisabled =
+    (currentStep === 0 && (!nome || !telefone || !email)) ||
+    (currentStep === 1 && !cargo)
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={(e) => e.preventDefault()}>
       <div className="flex flex-col gap-6 items-center justify-around h-full">
         {currentStep === 0 && (
           <>
             <div className="w-full space-y-2">
               <Label className="">Nome</Label>
               <InputRoot>
-                <InputIcon></InputIcon>
+                <InputIcon>
+                  <FaUser className="text-zinc-500" />
+                </InputIcon>
                 <Input
                   {...register('nome', { required: true })}
                   placeholder="Digite o seu nome"
@@ -119,7 +115,9 @@ export function Form({ currentStep, setCurrentStep }: FormProps) {
             <div className="w-full space-y-2">
               <Label className="">Telefone</Label>
               <InputRoot>
-                <InputIcon></InputIcon>
+                <InputIcon>
+                  <FaPhoneAlt className="text-zinc-500" />
+                </InputIcon>
                 <Input
                   {...register('telefone', { required: true })}
                   placeholder="(xx)xxxx-xxxx"
@@ -135,7 +133,9 @@ export function Form({ currentStep, setCurrentStep }: FormProps) {
             <div className="w-full space-y-2">
               <Label className="">E-mail</Label>
               <InputRoot>
-                <InputIcon></InputIcon>
+                <InputIcon>
+                  <MdAttachEmail className="text-zinc-500" />
+                </InputIcon>
                 <Input
                   {...register('email', { required: true })}
                   placeholder="exemplo@email.com"
@@ -211,9 +211,9 @@ export function Form({ currentStep, setCurrentStep }: FormProps) {
         )}
 
         <Button
-          type="submit"
+          onClick={handleNextStep}
           isLoading={isLoading}
-          disabled={isLoading || isSuccess}
+          disabled={isLoading || isButtonDisabled}
           sizes="full"
           variant="highlight"
         >

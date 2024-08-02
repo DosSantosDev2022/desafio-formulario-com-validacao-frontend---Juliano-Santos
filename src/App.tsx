@@ -22,7 +22,7 @@ function App() {
   return (
     <>
       <main className="flex items-center justify-center h-screen">
-        <div className="border w-[592px]  space-y-8 shadow-sm bg-zinc-50 rounded-sm p-8">
+        <div className="border w-full lg:w-[592px]  space-y-8 shadow-sm bg-zinc-50 rounded-sm p-8">
           <Steps
             steps={steps}
             currentStep={currentStep}

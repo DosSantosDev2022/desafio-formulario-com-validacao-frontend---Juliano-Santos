@@ -22,13 +22,15 @@ export function Steps({ steps, currentStep, setCurrentStep }: StepsProps) {
           onClick={() => setCurrentStep(index)}
         >
           <div
-            className={`bg-violet-900 rounded-full p-5 w-7 h-7 font-medium flex items-center justify-center
+            className={`bg-violet-900 rounded-full lg:p-5 p-4 lg:w-7 lg:h-7 w-5 h-5 font-medium flex items-center justify-center
                text-zinc-50
                ${currentStep === index ? 'bg-violet-900' : 'bg-zinc-500'}`}
           >
             {step.index}
           </div>
-          <button className="font-bold text-lg">{step.content} </button>
+          <button className="font-bold text-sm lg:text-lg">
+            {step.content}{' '}
+          </button>
         </div>
       ))}
     </div>
